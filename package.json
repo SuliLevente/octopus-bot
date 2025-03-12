@@ -1,0 +1,23 @@
+{
+  "name": "octopus-bot",
+  "version": "1.0.0",
+  "description": "Octopus is a Discord bot helping with everyday tasks for the server.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SuliLevente/octopus-bot.git"
+  },
+  "author": "Levente Süli",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SuliLevente/octopus-bot/issues"
+  },
+  "homepage": "https://github.com/SuliLevente/octopus-bot#readme",
+  "dependencies": {
+    "discord.js": "^14.18.0",
+    "dotenv": "^16.4.7"
+  }
+}
