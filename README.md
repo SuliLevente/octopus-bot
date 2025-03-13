@@ -12,12 +12,19 @@ Currently this bot is customly made for the ReaperMC Discord server, and if you 
 
 If you experience any malfunction or bugs when you use the bot, we kindly ask you to report it using our Discord ticket system or if the problem is with the ticket system, then sending a message to one of our **Developers**.
 
+## Features
+
+The bot supports the following features:
+
+- Suggestions
+- Embedsay
+- User logging (guildMemberAdd, guildMemberRemove)
+
 ## Roadmap
 
 The bot is currently under development, and these are our upcoming features:
 
 - Advanced ticket system
-- Suggestions
 - Advertisement opportunity for influencers
 
 ## License
