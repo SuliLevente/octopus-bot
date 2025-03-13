@@ -1,6 +1,6 @@
 # ReaperMC / Octopus
 
-Octopus is a custom made Discord bot for ReaperMC, which supports the community's Discord server. It handles tickets, helps in new ideas and logs important events happening on the server.
+Octopus is a custom made Discord bot for ReaperMC, which supports the community's Discord server. It handles tickets, helps in new ideas and logs important events happening on the server. It is currently NOT 24/7, but we're working on it.
 
 ## Usage
 
