@@ -1,4 +1,4 @@
-const { Client, GatewayIntentBits, ActivityType, MessageFlags, EmbedBuilder, Message, ButtonBuilder, ButtonStyle, ActionRowBuilder, SlashCommandBuilder, TextChannel, ChannelType, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } = require('discord.js');
+const { Client, GatewayIntentBits, ActivityType, MessageFlags, EmbedBuilder, Message, ButtonBuilder, ButtonStyle, ActionRowBuilder, SlashCommandBuilder, TextChannel, ChannelType, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, PermissionsBitField, PermissionFlagsBits } = require('discord.js');
 const config = require('./config.json');
 const mysql = require('mysql');
 const discordTranscripts = require('discord-html-transcripts');
@@ -38,33 +38,34 @@ client.on('interactionCreate', async (interaction) => {
 
     if(interaction.isCommand()) {
         if(interaction.commandName === 'suggest') {
-            let suggestion = interaction.options.getString('suggestion');
+            let suggestion = interaction.options.getString('ötlet');
             let suggestionChannel = interaction.guild.channels.cache.get(config.suggestionChannelId);
     
             interaction.reply({content: 'Your suggestion was successfully received! :white_check_mark:', flags: MessageFlags.Ephemeral});
             
             let suggestionEmbed = new EmbedBuilder()
-            .setTitle('New suggestion! 💡')
-            .setDescription('You can vote by reacting to this message with :white_check_mark: or :x:.')
+            .setTitle('Új ötlet! 💡')
+            .setDescription('Az ötletre szavazhatsz a :white_check_mark: vagy az :x: reakciók megnyomásával.')
             .setColor('Yellow')
+            .setThumbnail('https://media.discordapp.net/attachments/1103077030439944245/1210174317749477396/pixel-art-speech-bubble-with-light-bulb-icon-icon-for-8bit-game-on-white-background-vector.png?ex=67dd4229&is=67dbf0a9&hm=6018ea51ad90ade51d7c150fb8b33e664d38f26eef340f25102a3f0b06fe83b2&=&format=webp&quality=lossless&width=1125&height=960')
             .addFields(
                 {
-                    name: 'Proposer:',
+                    name: 'Javasló:',
                     value: `${interaction.member}`
                 },
                 {
-                    name: 'Suggestion:',
+                    name: 'Javaslat:',
                     value: `\`${suggestion}\``
                 }
             )
             .setTimestamp()
             .setFooter({
                 iconURL: client.user.avatarURL(),
-                text: `${client.user.username} - Suggestion system`
+                text: `${client.user.username} - Ötlet rendszer`
             });
     
             let closeButton = new ButtonBuilder()
-            .setLabel('Close')
+            .setLabel('Lezárás')
             .setEmoji('🔒')
             .setStyle(ButtonStyle.Danger)
             .setCustomId('close-suggestion');
@@ -137,42 +138,43 @@ client.on('interactionCreate', async (interaction) => {
         else if(interaction.commandName === 'test') {
             if(interaction.member.user.id != '689015719584989193') return;
 
-            let ticketEmbed = new EmbedBuilder()
-            .setTitle('Ticket nyitás 💡')
-            .setDescription('Egy ticket nyitásának folyamatát az alábbi kategóriák közüli választással kezdheted meg!')
-            .setColor('Green')
+            // let ticketEmbed = new EmbedBuilder()
+            // .setTitle('Ticket nyitás 💡')
+            // .setDescription('Egy ticket nyitásának folyamatát az alábbi kategóriák közüli választással kezdheted meg!')
+            // .setColor('Green')
+            // .setThumbnail('https://media.discordapp.net/attachments/1103077030439944245/1222284902943424664/ticket.png?ex=67ddcf85&is=67dc7e05&hm=3e27b6253a5663f2cded31da7de58eadbcb9b5be1c74d9386bea1d575166da13&=&format=webp&quality=lossless')
 
-            let ticketCategorySelector = new StringSelectMenuBuilder()
-            .setCustomId('ticket-category-selector')
-            .setPlaceholder('Válassz kategóriát!')
-            .addOptions(
-				new StringSelectMenuOptionBuilder()
-					.setLabel('Discord')
-					.setDescription('Gondom akadt, illetve kérdezni/jelezni szeretnék valamit Discorddal kapcsolatban.')
-					.setValue('discord')
-                    .setEmoji('🤖'),
-				new StringSelectMenuOptionBuilder()
-					.setLabel('Szerver')
-					.setDescription('Kérdésem vagy észrevételem van a szerverrel kapcsolatban.')
-					.setValue('server')
-                    .setEmoji('💻'),
-				new StringSelectMenuOptionBuilder()
-					.setLabel('Tagfelvétel')
-					.setDescription('Szeretnék jelentkezni a csapatba.')
-					.setValue('tgf')
-                    .setEmoji('🛠️'),
-                new StringSelectMenuOptionBuilder()
-                    .setLabel('Felhasználói fiók')
-                    .setDescription('Gondom akadt a felhasználói fiókommal.')
-                    .setValue('account')
-                    .setEmoji('🚹')
-			);
+            // let ticketCategorySelector = new StringSelectMenuBuilder()
+            // .setCustomId('ticket-category-selector')
+            // .setPlaceholder('Válassz kategóriát!')
+            // .addOptions(
+			// 	new StringSelectMenuOptionBuilder()
+			// 		.setLabel('Discord')
+			// 		.setDescription('Gondom akadt, illetve kérdezni/jelezni szeretnék valamit Discorddal kapcsolatban.')
+			// 		.setValue('discord')
+            //         .setEmoji('🤖'),
+			// 	new StringSelectMenuOptionBuilder()
+			// 		.setLabel('Szerver')
+			// 		.setDescription('Kérdésem vagy észrevételem van a szerverrel kapcsolatban.')
+			// 		.setValue('server')
+            //         .setEmoji('💻'),
+			// 	new StringSelectMenuOptionBuilder()
+			// 		.setLabel('Tagfelvétel')
+			// 		.setDescription('Szeretnék jelentkezni a csapatba.')
+			// 		.setValue('tgf')
+            //         .setEmoji('🛠️'),
+            //     new StringSelectMenuOptionBuilder()
+            //         .setLabel('Felhasználói fiók')
+            //         .setDescription('Gondom akadt a felhasználói fiókommal.')
+            //         .setValue('account')
+            //         .setEmoji('🚹')
+			// );
 
-            let row = new ActionRowBuilder()
-            .addComponents(ticketCategorySelector)
+            // let row = new ActionRowBuilder()
+            // .addComponents(ticketCategorySelector)
 
-            interaction.channel.send({embeds: [ticketEmbed], components: [row]});
-            interaction.reply({content: 'Message successfully sent! :white_check_mark:', flags: MessageFlags.Ephemeral});
+            // interaction.channel.send({embeds: [ticketEmbed], components: [row]});
+            // interaction.reply({content: 'Message successfully sent! :white_check_mark:', flags: MessageFlags.Ephemeral});
 
             /*let user = interaction.options.getMember('user');
             if(user instanceof GuildMember) {
@@ -188,6 +190,72 @@ client.on('interactionCreate', async (interaction) => {
                     }
                 })
             }*/
+        
+            let bannedTicketEmbed = new EmbedBuilder()
+            .setTitle('<:felhivas_3:1206266590354743316> Ki lettél tiltva a szerverről!')
+            .setDescription('Az alábbiakban meg tudod nézni kitiltásod okát, és amennyiben jogtalannak érzed, nyithatsz egy fellebbező ticketet is.')
+            .setColor('Yellow');
+
+            let banReasonButton = new ButtonBuilder()
+            .setLabel('Kitiltás oka')
+            .setCustomId('ban-reason-button')
+            .setEmoji('❔')
+            .setStyle(ButtonStyle.Secondary);
+
+            let unbanTicketOpenButton = new ButtonBuilder()
+            .setLabel('Fellebbezés')
+            .setCustomId('unban-ticket-button')
+            .setEmoji('✌️')
+            .setStyle(ButtonStyle.Secondary);
+
+            let row = new ActionRowBuilder().addComponents(banReasonButton, unbanTicketOpenButton);
+
+            interaction.channel.send({embeds: [bannedTicketEmbed], components: [row]});
+
+            interaction.reply({content: 'siker', flags: MessageFlags.Ephemeral});
+        }
+        else if(interaction.commandName === 'kitiltás') {
+            let selectedUser = interaction.options.getMember("felhasználó")
+            let banReason = interaction.options.getString("ok");
+            if(selectedUser.roles.cache.has('1186432694406611014') || selectedUser.roles.cache.has('1186432688446509158') || selectedUser.roles.cache.has('1186432687150473307') || selectedUser.roles.cache.has('1186432685825065082') || selectedUser.roles.cache.has('1186432684692611193') || selectedUser.roles.cache.has('1186432667168800870') || selectedUser.roles.cache.has('1294416803824668783') || selectedUser.roles.cache.has('1186432665805672560') || selectedUser.roles.cache.has('1186432663796600944')) {
+                let cancelEmbed = new EmbedBuilder()
+                .setTitle('Nincs jogosultságod ennek az embernek a kitiltásához!')
+                .setColor('Red');
+                interaction.reply({embeds: [cancelEmbed], flags: MessageFlags.Ephemeral});
+            }
+            else {
+                db.query(`SELECT * FROM bans WHERE userid='${selectedUser.id}'`, function (err,results) {
+                    if(err) throw err;
+                    console.log(results[0])
+                    if(results[0] != undefined) {
+                        let cancelEmbed = new EmbedBuilder()
+                        .setTitle('Ez az ember már ki van tiltva!')
+                        .setColor('Red');
+                        
+                        interaction.reply({embeds: [cancelEmbed], flags: MessageFlags.Ephemeral});
+                    }
+                    else {
+                        db.query(`INSERT INTO bans (userid,banreason,staffid) VALUES ('${selectedUser.id}','${banReason}','${interaction.member.user.id}')`, function (err) {if(err) throw err;});
+                        if(selectedUser.roles.cache.has('1207744874267283517')) {
+                            let boosterRole = interaction.guild.roles.cache.get('1207744874267283517');
+                            let bannedRole = interaction.guild.roles.cache.get(config.bannedUserRoleId);
+                            selectedUser.roles.set([boosterRole, bannedRole]);
+                            let confirmEmbed = new EmbedBuilder()
+                            .setTitle(`Sikeresen kitiltottad \`${selectedUser.displayName}\` felhasználót!`)
+                            .setColor('Green');
+                            interaction.reply({embeds: [confirmEmbed], flags: MessageFlags.Ephemeral});
+                        }
+                        else {
+                            let bannedRole = interaction.guild.roles.cache.get(config.bannedUserRoleId);
+                            selectedUser.roles.set([bannedRole]);
+                            let confirmEmbed = new EmbedBuilder()
+                            .setTitle(`Sikeresen kitiltottad \`${selectedUser.displayName}\` felhasználót!`)
+                            .setColor('Green');
+                            interaction.reply({embeds: [confirmEmbed], flags: MessageFlags.Ephemeral});
+                        }
+                    }
+                })
+            }
         }
     }
     else if(interaction.isButton()) {
@@ -205,19 +273,20 @@ client.on('interactionCreate', async (interaction) => {
                 let originalEmbed = message.embeds[0];
 
                 let resultEmbed = new EmbedBuilder()
-                .setTitle('Suggestion result 💡')
-                .setDescription('This suggestion is over.')
+                .setTitle('Ötlet végeredmény 💡')
+                .setDescription('Ez a szavazás véget ért.')
+                .setThumbnail('https://media.discordapp.net/attachments/1103077030439944245/1210174317749477396/pixel-art-speech-bubble-with-light-bulb-icon-icon-for-8bit-game-on-white-background-vector.png?ex=67dd4229&is=67dbf0a9&hm=6018ea51ad90ade51d7c150fb8b33e664d38f26eef340f25102a3f0b06fe83b2&=&format=webp&quality=lossless&width=1125&height=960')
                 .addFields(
                     originalEmbed.fields[0],
                     originalEmbed.fields[1],
                     {
-                        name: 'Result:',
+                        name: 'Eredmény:',
                         value: `👍 **${upvoteCount}**  👎 **${downvoteCount}**`
                     }
                 )
                 .setTimestamp()
                 .setFooter({
-                    text: `${client.user.username} - Suggestion results`,
+                    text: `${client.user.username} - Ötlet eredmények`,
                     iconURL: client.user.avatarURL()
                 });
 
@@ -237,7 +306,7 @@ client.on('interactionCreate', async (interaction) => {
             }
             else {
                 let permissionDeniedEmbed = new EmbedBuilder()
-                .setTitle('You don\'t have the permission to do that! :x:')
+                .setTitle('Ehhez nincs jogosultságod!')
                 .setColor('Red');
 
                 interaction.reply({embeds: [permissionDeniedEmbed], flags: MessageFlags.Ephemeral});
@@ -256,6 +325,52 @@ client.on('interactionCreate', async (interaction) => {
                         type: ChannelType.GuildText,
                         parent: '1221915880171241532',
                         reason: 'Ticket created for user',
+                        permissionOverwrites: [
+                            {
+                                id: interaction.guild.id,
+                                deny: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory, PermissionFlagsBits.CreatePublicThreads, PermissionFlagsBits.CreatePrivateThreads, PermissionFlagsBits.CreateEvents, PermissionFlagsBits.ManageEvents, PermissionFlagsBits.ManageMessages, PermissionFlagsBits.ManageThreads, PermissionFlagsBits.ManageRoles, PermissionFlagsBits.ManageWebhooks]
+                            },
+                            {
+                                id: interaction.member.user.id,
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432694406611014',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432688446509158',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432687150473307',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432685825065082',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432684692611193',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432667168800870',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1294416803824668783',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432665805672560',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432663796600944',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            }
+                        ],
                     }).then(channel => {
                         let welcomeEmbed = new EmbedBuilder()
                             .setTitle('Welcome to this ticket!')
@@ -275,19 +390,27 @@ client.on('interactionCreate', async (interaction) => {
             })
         }
         else if(interaction.customId == 'close-ticket-button') {
-            let makeSureEmbed = new EmbedBuilder()
-            .setTitle('Biztosan be akarod zárni a ticketet? Ezzel törlöd a csatornát is!')
-            .setDescription('Ha nem, akkor nyomj az **Üzenet elvetése** feliratra!')
-            .setColor('Red');
-
-            let yesButton = new ButtonBuilder()
-            .setCustomId('confirm-close-ticket-button')
-            .setLabel('Igen, megerősítem')
-            .setStyle(ButtonStyle.Danger);
-
-            let row = new ActionRowBuilder().addComponents(yesButton);
-
-            interaction.reply({embeds: [makeSureEmbed], components: [row], flags: MessageFlags.Ephemeral});
+            if(interaction.member.roles.cache.has('1186432694406611014') || interaction.member.roles.cache.has('1186432688446509158') || interaction.member.roles.cache.has('1186432687150473307') || interaction.member.roles.cache.has('1186432685825065082') || interaction.member.roles.cache.has('1186432684692611193') || interaction.member.roles.cache.has('1186432667168800870') || interaction.member.roles.cache.has('1294416803824668783') || interaction.member.roles.cache.has('1186432665805672560') || interaction.member.roles.cache.has('1186432663796600944') || interaction.member.roles.cache.has('1352377995976904888'))  {
+                let makeSureEmbed = new EmbedBuilder()
+                .setTitle('Biztosan be akarod zárni a ticketet? Ezzel törlöd a csatornát is!')
+                .setDescription('Ha nem, akkor nyomj az **Üzenet elvetése** feliratra!')
+                .setColor('Red');
+    
+                let yesButton = new ButtonBuilder()
+                .setCustomId('confirm-close-ticket-button')
+                .setLabel('Igen, megerősítem')
+                .setStyle(ButtonStyle.Danger);
+    
+                let row = new ActionRowBuilder().addComponents(yesButton);
+    
+                interaction.reply({embeds: [makeSureEmbed], components: [row], flags: MessageFlags.Ephemeral});
+            }
+            else {
+                let replyEmbed = new EmbedBuilder()
+                .setTitle('Nincs jogod bezárni ezt a ticketet!')
+                .setColor('Red');
+                interaction.reply({embeds: [replyEmbed], flags: MessageFlags.Ephemeral});
+            }
         }
         else if(interaction.customId == 'confirm-close-ticket-button') {
             db.query(`SELECT * FROM tickets WHERE ticketid='${interaction.channel.id}'`, async function (err, results) {
@@ -329,41 +452,159 @@ client.on('interactionCreate', async (interaction) => {
                 if(results[0] != undefined) {
                     let result = results[0];
                     if(result["ticketclaimed"] == 0) {
-                        db.query(`UPDATE tickets SET ticketclaimed=1, ticketstaffusername='${interaction.member.user.username}', ticketstaffuserid='${interaction.member.user.id}' WHERE ticketid='${interaction.channel.id}'`, function (err) {if(err) throw err;});
+                        if(interaction.member.roles.cache.has('1186432694406611014') || interaction.member.roles.cache.has('1186432688446509158') || interaction.member.roles.cache.has('1186432687150473307') || interaction.member.roles.cache.has('1186432685825065082') || interaction.member.roles.cache.has('1186432684692611193') || interaction.member.roles.cache.has('1186432667168800870') || interaction.member.roles.cache.has('1294416803824668783') || interaction.member.roles.cache.has('1186432665805672560') || interaction.member.roles.cache.has('1186432663796600944') || interaction.member.roles.cache.has('1352377995976904888')) {
+                            db.query(`UPDATE tickets SET ticketclaimed=1, ticketstaffusername='${interaction.member.user.username}', ticketstaffuserid='${interaction.member.user.id}' WHERE ticketid='${interaction.channel.id}'`, function (err) {if(err) throw err;});
 
-                        let replyEmbed = new EmbedBuilder()
-                        .setTitle('Sikeresen felvetted a ticketet!')
-                        .setColor('Green');
-                        interaction.reply({embeds: [replyEmbed], flags: MessageFlags.Ephemeral});
+                            interaction.channel.permissionOverwrites.edit(interaction.member.user.id, {
+                                SendMessages: true
+                            });
 
-                        let channelEmbed = new EmbedBuilder()
-                        .setTitle('Ticket felvéve!')
-                        .setDescription(`A ticketet felvette ${interaction.member.user.displayName}!`)
-                        .setColor('Yellow');
-                        interaction.channel.send({embeds: [channelEmbed]});
-
-                        let message = interaction.channel.messages.cache.get(`${result["ticketmessageid"]}`);
-                        if(result["ticketclosed"] == 1) {
-                            message.edit({components: []});
+                            let replyEmbed = new EmbedBuilder()
+                            .setTitle('Sikeresen felvetted a ticketet!')
+                            .setColor('Green');
+                            interaction.reply({embeds: [replyEmbed], flags: MessageFlags.Ephemeral});
+    
+                            let channelEmbed = new EmbedBuilder()
+                            .setTitle('Ticket felvéve!')
+                            .setDescription(`A ticketet felvette ${interaction.member.user.displayName}!`)
+                            .setColor('Yellow');
+                            interaction.channel.send({embeds: [channelEmbed]});
+    
+                            let message = interaction.channel.messages.cache.get(`${result["ticketmessageid"]}`);
+    
+                            let reClaimTicketButton = new ButtonBuilder()
+                            .setLabel('Átvétel')
+                            .setEmoji('🫳')
+                            .setStyle(ButtonStyle.Secondary)
+                            .setCustomId('claim-ticket-button');
+    
+                            let closeTicketButton = new ButtonBuilder()
+                            .setLabel('Bezárás')
+                            .setEmoji('🔒')
+                            .setStyle(ButtonStyle.Danger)
+                            .setCustomId('close-ticket-button');
+    
+                            let row = new ActionRowBuilder().addComponents(closeTicketButton, reClaimTicketButton);
+    
+                            message.edit({components: [row]});
                         }
                         else {
-                            let closeButton = new ButtonBuilder()
-                            .setCustomId('close-ticket-button')
-                            .setLabel('Bezárás')
-                            .setStyle(ButtonStyle.Danger)
-                            .setEmoji('🔒');
-                            let row = new ActionRowBuilder().addComponents(closeButton);
-                            message.edit({components: [row]});
+                            let replyEmbed = new EmbedBuilder()
+                            .setTitle('Nincs jogod felvenni ezt a ticketet!')
+                            .setColor('Red');
+                            interaction.reply({embeds: [replyEmbed], flags: MessageFlags.Ephemeral});
                         }
                     }
                     else if(result["ticketclaimed"] == 1) {
-                        let replyEmbed = new EmbedBuilder()
-                        .setTitle('A ticket már fel van véve valaki más által!')
-                        .setColor('Red');
-                        interaction.reply({embeds: [replyEmbed], flags: MessageFlags.Ephemeral});
+                        if(interaction.member.roles.cache.has('1186432694406611014') || interaction.member.roles.cache.has('1186432688446509158') || interaction.member.roles.cache.has('1186432687150473307') || interaction.member.roles.cache.has('1186432685825065082') || interaction.member.roles.cache.has('1186432684692611193') || interaction.member.roles.cache.has('1186432667168800870') || interaction.member.roles.cache.has('1294416803824668783') || interaction.member.roles.cache.has('1186432665805672560') || interaction.member.roles.cache.has('1186432663796600944') || interaction.member.roles.cache.has('1352377995976904888')) {
+                            if(interaction.member.user.id == result["ticketstaffuserid"]) {
+                                let replyEmbed = new EmbedBuilder()
+                                .setTitle('Már felvetted ezt a ticketet!')
+                                .setColor('Red');
+                                interaction.reply({embeds: [replyEmbed], flags: MessageFlags.Ephemeral});
+                            }
+                            else {
+                                interaction.channel.permissionOverwrites.edit(result["ticketstaffuserid"], {
+                                    SendMessages: false
+                                });
+
+                                db.query(`UPDATE tickets SET ticketstaffuserid='${interaction.member.user.id}', ticketstaffusername='${interaction.member.user.id}' WHERE ticketid='${interaction.channel.id}'`, function (err) {if(err) throw err;});
+
+                                interaction.channel.permissionOverwrites.edit(interaction.member.user.id, {
+                                    SendMessages: true
+                                });
+
+                                let replyEmbed = new EmbedBuilder()
+                                .setTitle('Sikeresen átvetted a ticketet!')
+                                .setColor('Green');
+                                interaction.reply({embeds: [replyEmbed], flags: MessageFlags.Ephemeral});
+        
+                                let channelEmbed = new EmbedBuilder()
+                                .setTitle('Ticket átvéve!')
+                                .setDescription(`A ticketet átvette ${interaction.member.user.displayName}!`)
+                                .setColor('Yellow');
+                                interaction.channel.send({embeds: [channelEmbed]});
+                            }
+                        }
+                        else {
+                            if(interaction.member.user.id == result["ticketuserid"]) {
+                                let replyEmbed = new EmbedBuilder()
+                                .setTitle('Te nyitottad a ticketet, nincs jogod felvenni!')
+                                .setColor('Red');
+                                interaction.reply({embeds: [replyEmbed], flags: MessageFlags.Ephemeral});
+                            }
+                            else if(interaction.member.user.id == result["ticketstaffuserid"]) {
+                                let replyEmbed = new EmbedBuilder()
+                                .setTitle('Már felvetted ezt a ticketet!')
+                                .setColor('Red');
+                                interaction.reply({embeds: [replyEmbed], flags: MessageFlags.Ephemeral});
+                            }
+                            else {
+                                let replyEmbed = new EmbedBuilder()
+                                .setTitle('A ticket már fel van véve valaki más által!')
+                                .setColor('Red');
+                                interaction.reply({embeds: [replyEmbed], flags: MessageFlags.Ephemeral});
+                            }
+                        }
                     }
                 };
             });
+        }
+        else if(interaction.customId == 'unban-ticket-button') {
+            let discordBanModal = new ModalBuilder()
+            .setCustomId('discord-ban-modal')
+            .setTitle('Adj meg indoklást!');
+
+            let textInput = new TextInputBuilder()
+            .setCustomId('discord-ban-paragraph')
+            .setLabel('Kérlek indokold meg fellebbezésed!')
+            .setStyle(TextInputStyle.Paragraph)
+            .setMinLength(10)
+            .setMaxLength(500);
+
+            let firstRow = new ActionRowBuilder().addComponents(textInput);
+
+            discordBanModal.addComponents(firstRow);
+
+            await interaction.showModal(discordBanModal);
+        }
+        else if(interaction.customId == 'ban-reason-button') {
+            db.query(`SELECT * FROM bans WHERE userid='${interaction.member.user.id}'`, function (err ,results) {
+                if(err) throw err;
+                if(results[0] != undefined) {
+                    let result = results[0];
+
+                    let banReasonEmbed = new EmbedBuilder()
+                    .setTitle('❔ Kitiltás oka')
+                    .setDescription('Ha jogtalannak érzed a kitiltást vagy szerinted véletlen volt, indíts fellebbezést!')
+                    .addFields(
+                        {
+                            name: 'Staff:',
+                            value: `\`${interaction.guild.members.cache.get(result["staffid"]).user.displayName}\` AKA \`${interaction.guild.members.cache.get(result["staffid"]).user.username}\``
+                        },
+                        {
+                            name: 'Kitiltás oka:',
+                            value: `\`${result["banreason"]}\``
+                        }
+                    )
+                    .setColor('Red')
+                    .setFooter({
+                        text: `${client.user.username} - Kitiltás rendszer`,
+                        iconURL: client.user.avatarURL()
+                    })
+                    .setTimestamp();
+
+                    interaction.reply({embeds: [banReasonEmbed], flags: MessageFlags.Ephemeral});
+                }
+                else {
+                    let cancelEmbed = new EmbedBuilder()
+                    .setTitle('Te nem vagy kitiltva!')
+                    .setDescription('*Ha ez szerinted egy hibás üzenet, indíts fellebbezést!*')
+                    .setColor('Red');
+
+                    interaction.reply({embeds: [cancelEmbed], flags: MessageFlags.Ephemeral});
+                }
+            })
         }
     }
     else if(interaction.isStringSelectMenu()) {
@@ -872,6 +1113,98 @@ client.on('interactionCreate', async (interaction) => {
                         type: ChannelType.GuildText,
                         parent: '1222164933219975178',
                         reason: 'Ticket created for user',
+                        permissionOverwrites: [
+                            {
+                                id: interaction.guild.id,
+                                deny: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory, PermissionFlagsBits.CreatePublicThreads, PermissionFlagsBits.CreatePrivateThreads, PermissionFlagsBits.CreateEvents, PermissionFlagsBits.ManageEvents, PermissionFlagsBits.ManageMessages, PermissionFlagsBits.ManageThreads, PermissionFlagsBits.ManageRoles, PermissionFlagsBits.ManageWebhooks]
+                            },
+                            {
+                                id: interaction.member.user.id,
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432694406611014',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432688446509158',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432687150473307',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432685825065082',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432684692611193',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432667168800870',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1294416803824668783',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432665805672560',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432663796600944',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            }
+                        ],
+                        permissionOverwrites: [
+                            {
+                                id: interaction.guild.id,
+                                deny: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory, PermissionFlagsBits.CreatePublicThreads, PermissionFlagsBits.CreatePrivateThreads, PermissionFlagsBits.CreateEvents, PermissionFlagsBits.ManageEvents, PermissionFlagsBits.ManageMessages, PermissionFlagsBits.ManageThreads, PermissionFlagsBits.ManageRoles, PermissionFlagsBits.ManageWebhooks]
+                            },
+                            {
+                                id: interaction.member.user.id,
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432694406611014',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432688446509158',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432687150473307',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432685825065082',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432684692611193',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432667168800870',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1294416803824668783',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432665805672560',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432663796600944',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            }
+                        ],
                     }).then(channel => {
                         let welcomeEmbed = new EmbedBuilder()
                         .setTitle(`💡 Ticket - ${interaction.member.user.username}`)
@@ -934,6 +1267,98 @@ client.on('interactionCreate', async (interaction) => {
                         type: ChannelType.GuildText,
                         parent: '1222164933219975178',
                         reason: 'Ticket created for user',
+                        permissionOverwrites: [
+                            {
+                                id: interaction.guild.id,
+                                deny: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory, PermissionFlagsBits.CreatePublicThreads, PermissionFlagsBits.CreatePrivateThreads, PermissionFlagsBits.CreateEvents, PermissionFlagsBits.ManageEvents, PermissionFlagsBits.ManageMessages, PermissionFlagsBits.ManageThreads, PermissionFlagsBits.ManageRoles, PermissionFlagsBits.ManageWebhooks]
+                            },
+                            {
+                                id: interaction.member.user.id,
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432694406611014',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432688446509158',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432687150473307',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432685825065082',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432684692611193',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432667168800870',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1294416803824668783',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432665805672560',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432663796600944',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            }
+                        ],
+                        permissionOverwrites: [
+                            {
+                                id: interaction.guild.id,
+                                deny: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory, PermissionFlagsBits.CreatePublicThreads, PermissionFlagsBits.CreatePrivateThreads, PermissionFlagsBits.CreateEvents, PermissionFlagsBits.ManageEvents, PermissionFlagsBits.ManageMessages, PermissionFlagsBits.ManageThreads, PermissionFlagsBits.ManageRoles, PermissionFlagsBits.ManageWebhooks]
+                            },
+                            {
+                                id: interaction.member.user.id,
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432694406611014',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432688446509158',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432687150473307',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432685825065082',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432684692611193',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432667168800870',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1294416803824668783',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432665805672560',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432663796600944',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            }
+                        ],
                     }).then(channel => {
                         let welcomeEmbed = new EmbedBuilder()
                         .setTitle(`💡 Ticket - ${interaction.member.user.username}`)
@@ -996,6 +1421,52 @@ client.on('interactionCreate', async (interaction) => {
                         type: ChannelType.GuildText,
                         parent: '1222164933219975178',
                         reason: 'Ticket created for user',
+                        permissionOverwrites: [
+                            {
+                                id: interaction.guild.id,
+                                deny: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory, PermissionFlagsBits.CreatePublicThreads, PermissionFlagsBits.CreatePrivateThreads, PermissionFlagsBits.CreateEvents, PermissionFlagsBits.ManageEvents, PermissionFlagsBits.ManageMessages, PermissionFlagsBits.ManageThreads, PermissionFlagsBits.ManageRoles, PermissionFlagsBits.ManageWebhooks]
+                            },
+                            {
+                                id: interaction.member.user.id,
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432694406611014',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432688446509158',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432687150473307',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432685825065082',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432684692611193',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432667168800870',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1294416803824668783',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432665805672560',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432663796600944',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            }
+                        ],
                     }).then(channel => {
                         let welcomeEmbed = new EmbedBuilder()
                         .setTitle(`💡 Ticket - ${interaction.member.user.username}`)
@@ -1058,6 +1529,52 @@ client.on('interactionCreate', async (interaction) => {
                         type: ChannelType.GuildText,
                         parent: '1222159502359396454',
                         reason: 'Ticket created for user',
+                        permissionOverwrites: [
+                            {
+                                id: interaction.guild.id,
+                                deny: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory, PermissionFlagsBits.CreatePublicThreads, PermissionFlagsBits.CreatePrivateThreads, PermissionFlagsBits.CreateEvents, PermissionFlagsBits.ManageEvents, PermissionFlagsBits.ManageMessages, PermissionFlagsBits.ManageThreads, PermissionFlagsBits.ManageRoles, PermissionFlagsBits.ManageWebhooks]
+                            },
+                            {
+                                id: interaction.member.user.id,
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432694406611014',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432688446509158',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432687150473307',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432685825065082',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432684692611193',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432667168800870',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1294416803824668783',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432665805672560',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432663796600944',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            }
+                        ],
                     }).then(channel => {
                         let welcomeEmbed = new EmbedBuilder()
                         .setTitle(`💡 Ticket - ${interaction.member.user.username}`)
@@ -1120,6 +1637,52 @@ client.on('interactionCreate', async (interaction) => {
                         type: ChannelType.GuildText,
                         parent: '1222159502359396454',
                         reason: 'Ticket created for user',
+                        permissionOverwrites: [
+                            {
+                                id: interaction.guild.id,
+                                deny: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory, PermissionFlagsBits.CreatePublicThreads, PermissionFlagsBits.CreatePrivateThreads, PermissionFlagsBits.CreateEvents, PermissionFlagsBits.ManageEvents, PermissionFlagsBits.ManageMessages, PermissionFlagsBits.ManageThreads, PermissionFlagsBits.ManageRoles, PermissionFlagsBits.ManageWebhooks]
+                            },
+                            {
+                                id: interaction.member.user.id,
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432694406611014',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432688446509158',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432687150473307',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432685825065082',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432684692611193',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432667168800870',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1294416803824668783',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432665805672560',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432663796600944',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            }
+                        ],
                     }).then(channel => {
                         let welcomeEmbed = new EmbedBuilder()
                         .setTitle(`💡 Ticket - ${interaction.member.user.username}`)
@@ -1182,6 +1745,52 @@ client.on('interactionCreate', async (interaction) => {
                         type: ChannelType.GuildText,
                         parent: '1222159502359396454',
                         reason: 'Ticket created for user',
+                        permissionOverwrites: [
+                            {
+                                id: interaction.guild.id,
+                                deny: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory, PermissionFlagsBits.CreatePublicThreads, PermissionFlagsBits.CreatePrivateThreads, PermissionFlagsBits.CreateEvents, PermissionFlagsBits.ManageEvents, PermissionFlagsBits.ManageMessages, PermissionFlagsBits.ManageThreads, PermissionFlagsBits.ManageRoles, PermissionFlagsBits.ManageWebhooks]
+                            },
+                            {
+                                id: interaction.member.user.id,
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432694406611014',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432688446509158',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432687150473307',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432685825065082',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432684692611193',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432667168800870',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1294416803824668783',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432665805672560',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432663796600944',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            }
+                        ],
                     }).then(channel => {
                         let welcomeEmbed = new EmbedBuilder()
                         .setTitle(`💡 Ticket - ${interaction.member.user.username}`)
@@ -1244,6 +1853,52 @@ client.on('interactionCreate', async (interaction) => {
                         type: ChannelType.GuildText,
                         parent: '1222159502359396454',
                         reason: 'Ticket created for user',
+                        permissionOverwrites: [
+                            {
+                                id: interaction.guild.id,
+                                deny: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory, PermissionFlagsBits.CreatePublicThreads, PermissionFlagsBits.CreatePrivateThreads, PermissionFlagsBits.CreateEvents, PermissionFlagsBits.ManageEvents, PermissionFlagsBits.ManageMessages, PermissionFlagsBits.ManageThreads, PermissionFlagsBits.ManageRoles, PermissionFlagsBits.ManageWebhooks]
+                            },
+                            {
+                                id: interaction.member.user.id,
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432694406611014',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432688446509158',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432687150473307',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432685825065082',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432684692611193',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432667168800870',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1294416803824668783',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432665805672560',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432663796600944',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            }
+                        ],
                     }).then(channel => {
                         let welcomeEmbed = new EmbedBuilder()
                         .setTitle(`💡 Ticket - ${interaction.member.user.username}`)
@@ -1306,6 +1961,52 @@ client.on('interactionCreate', async (interaction) => {
                         type: ChannelType.GuildText,
                         parent: '1222159502359396454',
                         reason: 'Ticket created for user',
+                        permissionOverwrites: [
+                            {
+                                id: interaction.guild.id,
+                                deny: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory, PermissionFlagsBits.CreatePublicThreads, PermissionFlagsBits.CreatePrivateThreads, PermissionFlagsBits.CreateEvents, PermissionFlagsBits.ManageEvents, PermissionFlagsBits.ManageMessages, PermissionFlagsBits.ManageThreads, PermissionFlagsBits.ManageRoles, PermissionFlagsBits.ManageWebhooks]
+                            },
+                            {
+                                id: interaction.member.user.id,
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432694406611014',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432688446509158',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432687150473307',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432685825065082',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432684692611193',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432667168800870',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1294416803824668783',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432665805672560',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432663796600944',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            }
+                        ],
                     }).then(channel => {
                         let welcomeEmbed = new EmbedBuilder()
                         .setTitle(`💡 Ticket - ${interaction.member.user.username}`)
@@ -1368,6 +2069,52 @@ client.on('interactionCreate', async (interaction) => {
                         type: ChannelType.GuildText,
                         parent: '1222159502359396454',
                         reason: 'Ticket created for user',
+                        permissionOverwrites: [
+                            {
+                                id: interaction.guild.id,
+                                deny: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory, PermissionFlagsBits.CreatePublicThreads, PermissionFlagsBits.CreatePrivateThreads, PermissionFlagsBits.CreateEvents, PermissionFlagsBits.ManageEvents, PermissionFlagsBits.ManageMessages, PermissionFlagsBits.ManageThreads, PermissionFlagsBits.ManageRoles, PermissionFlagsBits.ManageWebhooks]
+                            },
+                            {
+                                id: interaction.member.user.id,
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432694406611014',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432688446509158',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432687150473307',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432685825065082',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432684692611193',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432667168800870',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1294416803824668783',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432665805672560',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432663796600944',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            }
+                        ],
                     }).then(channel => {
                         let welcomeEmbed = new EmbedBuilder()
                         .setTitle(`💡 Ticket - ${interaction.member.user.username}`)
@@ -1430,6 +2177,52 @@ client.on('interactionCreate', async (interaction) => {
                         type: ChannelType.GuildText,
                         parent: '1222159359656591390',
                         reason: 'Ticket created for user',
+                        permissionOverwrites: [
+                            {
+                                id: interaction.guild.id,
+                                deny: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory, PermissionFlagsBits.CreatePublicThreads, PermissionFlagsBits.CreatePrivateThreads, PermissionFlagsBits.CreateEvents, PermissionFlagsBits.ManageEvents, PermissionFlagsBits.ManageMessages, PermissionFlagsBits.ManageThreads, PermissionFlagsBits.ManageRoles, PermissionFlagsBits.ManageWebhooks]
+                            },
+                            {
+                                id: interaction.member.user.id,
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432694406611014',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432688446509158',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432687150473307',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432685825065082',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432684692611193',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432667168800870',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1294416803824668783',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432665805672560',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432663796600944',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            }
+                        ],
                     }).then(channel => {
                         let welcomeEmbed = new EmbedBuilder()
                         .setTitle(`💡 Ticket - ${interaction.member.user.username}`)
@@ -1492,6 +2285,52 @@ client.on('interactionCreate', async (interaction) => {
                         type: ChannelType.GuildText,
                         parent: '1222159359656591390',
                         reason: 'Ticket created for user',
+                        permissionOverwrites: [
+                            {
+                                id: interaction.guild.id,
+                                deny: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory, PermissionFlagsBits.CreatePublicThreads, PermissionFlagsBits.CreatePrivateThreads, PermissionFlagsBits.CreateEvents, PermissionFlagsBits.ManageEvents, PermissionFlagsBits.ManageMessages, PermissionFlagsBits.ManageThreads, PermissionFlagsBits.ManageRoles, PermissionFlagsBits.ManageWebhooks]
+                            },
+                            {
+                                id: interaction.member.user.id,
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432694406611014',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432688446509158',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432687150473307',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432685825065082',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432684692611193',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432667168800870',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1294416803824668783',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432665805672560',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432663796600944',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            }
+                        ],
                     }).then(channel => {
                         let welcomeEmbed = new EmbedBuilder()
                         .setTitle(`💡 Ticket - ${interaction.member.user.username}`)
@@ -1554,6 +2393,52 @@ client.on('interactionCreate', async (interaction) => {
                         type: ChannelType.GuildText,
                         parent: '1222159359656591390',
                         reason: 'Ticket created for user',
+                        permissionOverwrites: [
+                            {
+                                id: interaction.guild.id,
+                                deny: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory, PermissionFlagsBits.CreatePublicThreads, PermissionFlagsBits.CreatePrivateThreads, PermissionFlagsBits.CreateEvents, PermissionFlagsBits.ManageEvents, PermissionFlagsBits.ManageMessages, PermissionFlagsBits.ManageThreads, PermissionFlagsBits.ManageRoles, PermissionFlagsBits.ManageWebhooks]
+                            },
+                            {
+                                id: interaction.member.user.id,
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432694406611014',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432688446509158',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432687150473307',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432685825065082',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432684692611193',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432667168800870',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1294416803824668783',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432665805672560',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432663796600944',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            }
+                        ],
                     }).then(channel => {
                         let welcomeEmbed = new EmbedBuilder()
                         .setTitle(`💡 Ticket - ${interaction.member.user.username}`)
@@ -1587,10 +2472,9 @@ client.on('interactionCreate', async (interaction) => {
                         .setStyle(ButtonStyle.Secondary)
                         .setEmoji('🙋‍♂️');
 
-                        let row = new ActionRowBuilder().addComponents(closeButton);
-                        let row2 = new ActionRowBuilder().addComponents(claimButton);
+                        let row = new ActionRowBuilder().addComponents(closeButton, claimButton);
                     
-                        channel.send({ content: `${interaction.member}`, embeds: [welcomeEmbed], components: [row , row2]}).then(message => {
+                        channel.send({ content: `${interaction.member}`, embeds: [welcomeEmbed], components: [row]}).then(message => {
                             db.query(`INSERT INTO tickets (ticketid,ticketusername,ticketuserid,ticketmessageid,ticketcategory,ticketreason) VALUES ('${channel.id}','${interaction.member.user.username}','${interaction.member.user.id}','${message.id}','Média jelentkezés','${reason}')`, function (err) {
                                 if (err) throw err;
                             });
@@ -1617,6 +2501,52 @@ client.on('interactionCreate', async (interaction) => {
                         type: ChannelType.GuildText,
                         parent: '1222159359656591390',
                         reason: 'Ticket created for user',
+                        permissionOverwrites: [
+                            {
+                                id: interaction.guild.id,
+                                deny: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory, PermissionFlagsBits.CreatePublicThreads, PermissionFlagsBits.CreatePrivateThreads, PermissionFlagsBits.CreateEvents, PermissionFlagsBits.ManageEvents, PermissionFlagsBits.ManageMessages, PermissionFlagsBits.ManageThreads, PermissionFlagsBits.ManageRoles, PermissionFlagsBits.ManageWebhooks]
+                            },
+                            {
+                                id: interaction.member.user.id,
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432694406611014',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432688446509158',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432687150473307',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432685825065082',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432684692611193',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432667168800870',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1294416803824668783',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432665805672560',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432663796600944',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            }
+                        ],
                     }).then(channel => {
                         let welcomeEmbed = new EmbedBuilder()
                         .setTitle(`💡 Ticket - ${interaction.member.user.username}`)
@@ -1679,6 +2609,52 @@ client.on('interactionCreate', async (interaction) => {
                         type: ChannelType.GuildText,
                         parent: '1222159359656591390',
                         reason: 'Ticket created for user',
+                        permissionOverwrites: [
+                            {
+                                id: interaction.guild.id,
+                                deny: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory, PermissionFlagsBits.CreatePublicThreads, PermissionFlagsBits.CreatePrivateThreads, PermissionFlagsBits.CreateEvents, PermissionFlagsBits.ManageEvents, PermissionFlagsBits.ManageMessages, PermissionFlagsBits.ManageThreads, PermissionFlagsBits.ManageRoles, PermissionFlagsBits.ManageWebhooks]
+                            },
+                            {
+                                id: interaction.member.user.id,
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432694406611014',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432688446509158',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432687150473307',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432685825065082',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432684692611193',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432667168800870',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1294416803824668783',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432665805672560',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432663796600944',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            }
+                        ],
                     }).then(channel => {
                         let welcomeEmbed = new EmbedBuilder()
                         .setTitle(`💡 Ticket - ${interaction.member.user.username}`)
@@ -1741,6 +2717,52 @@ client.on('interactionCreate', async (interaction) => {
                         type: ChannelType.GuildText,
                         parent: '1222159254593736764',
                         reason: 'Ticket created for user',
+                        permissionOverwrites: [
+                            {
+                                id: interaction.guild.id,
+                                deny: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory, PermissionFlagsBits.CreatePublicThreads, PermissionFlagsBits.CreatePrivateThreads, PermissionFlagsBits.CreateEvents, PermissionFlagsBits.ManageEvents, PermissionFlagsBits.ManageMessages, PermissionFlagsBits.ManageThreads, PermissionFlagsBits.ManageRoles, PermissionFlagsBits.ManageWebhooks]
+                            },
+                            {
+                                id: interaction.member.user.id,
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432694406611014',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432688446509158',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432687150473307',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432685825065082',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432684692611193',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432667168800870',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1294416803824668783',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432665805672560',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432663796600944',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            }
+                        ],
                     }).then(channel => {
                         let welcomeEmbed = new EmbedBuilder()
                         .setTitle(`💡 Ticket - ${interaction.member.user.username}`)
@@ -1803,6 +2825,52 @@ client.on('interactionCreate', async (interaction) => {
                         type: ChannelType.GuildText,
                         parent: '1222159254593736764',
                         reason: 'Ticket created for user',
+                        permissionOverwrites: [
+                            {
+                                id: interaction.guild.id,
+                                deny: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory, PermissionFlagsBits.CreatePublicThreads, PermissionFlagsBits.CreatePrivateThreads, PermissionFlagsBits.CreateEvents, PermissionFlagsBits.ManageEvents, PermissionFlagsBits.ManageMessages, PermissionFlagsBits.ManageThreads, PermissionFlagsBits.ManageRoles, PermissionFlagsBits.ManageWebhooks]
+                            },
+                            {
+                                id: interaction.member.user.id,
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432694406611014',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432688446509158',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432687150473307',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432685825065082',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432684692611193',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432667168800870',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1294416803824668783',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432665805672560',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432663796600944',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            }
+                        ],
                     }).then(channel => {
                         let welcomeEmbed = new EmbedBuilder()
                         .setTitle(`💡 Ticket - ${interaction.member.user.username}`)
@@ -1865,6 +2933,52 @@ client.on('interactionCreate', async (interaction) => {
                         type: ChannelType.GuildText,
                         parent: '1222159254593736764',
                         reason: 'Ticket created for user',
+                        permissionOverwrites: [
+                            {
+                                id: interaction.guild.id,
+                                deny: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory, PermissionFlagsBits.CreatePublicThreads, PermissionFlagsBits.CreatePrivateThreads, PermissionFlagsBits.CreateEvents, PermissionFlagsBits.ManageEvents, PermissionFlagsBits.ManageMessages, PermissionFlagsBits.ManageThreads, PermissionFlagsBits.ManageRoles, PermissionFlagsBits.ManageWebhooks]
+                            },
+                            {
+                                id: interaction.member.user.id,
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432694406611014',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432688446509158',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432687150473307',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432685825065082',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432684692611193',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432667168800870',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1294416803824668783',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432665805672560',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432663796600944',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            }
+                        ],
                     }).then(channel => {
                         let welcomeEmbed = new EmbedBuilder()
                         .setTitle(`💡 Ticket - ${interaction.member.user.username}`)
@@ -1927,6 +3041,52 @@ client.on('interactionCreate', async (interaction) => {
                         type: ChannelType.GuildText,
                         parent: '1222159254593736764',
                         reason: 'Ticket created for user',
+                        permissionOverwrites: [
+                            {
+                                id: interaction.guild.id,
+                                deny: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory, PermissionFlagsBits.CreatePublicThreads, PermissionFlagsBits.CreatePrivateThreads, PermissionFlagsBits.CreateEvents, PermissionFlagsBits.ManageEvents, PermissionFlagsBits.ManageMessages, PermissionFlagsBits.ManageThreads, PermissionFlagsBits.ManageRoles, PermissionFlagsBits.ManageWebhooks]
+                            },
+                            {
+                                id: interaction.member.user.id,
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432694406611014',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432688446509158',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432687150473307',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432685825065082',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432684692611193',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432667168800870',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1294416803824668783',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432665805672560',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            },
+                            {
+                                id: '1186432663796600944',
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory]
+                            }
+                        ],
                     }).then(channel => {
                         let welcomeEmbed = new EmbedBuilder()
                         .setTitle(`💡 Ticket - ${interaction.member.user.username}`)

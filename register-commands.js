@@ -3,10 +3,10 @@ require('dotenv').config();
 
 var suggest = new SlashCommandBuilder()
 .setName('suggest')
-.setDescription('You can suggest a new idea about the Minecraft/Discord server.')
+.setDescription('Új ötletet javasolhatsz a Minecraft/Discord szerverrel kapcsolatban.')
 .addStringOption(option =>
-    option.setName('suggestion')
-    .setDescription('Write your suggestion here.')
+    option.setName('ötlet')
+    .setDescription('Írd ide az ötletet.')
     .setRequired(true)
 );
 
@@ -60,9 +60,23 @@ var embedsay = new SlashCommandBuilder()
 
 var test = new SlashCommandBuilder()
 .setName('test')
-.setDescription('You can test what you want.')
+.setDescription('You can test what you want.');
 
-const commands = [embedsay.toJSON(), test.toJSON()];
+var kitiltás = new SlashCommandBuilder()
+.setName('kitiltás')
+.setDescription('Ezt a parancsot használhatod felhasználók kitiltására.')
+.addUserOption(option =>
+	option.setName('felhasználó')
+	.setDescription('Add meg a felhasználót, akit ki akarsz tiltani.')
+	.setRequired(true)
+)
+.addStringOption(option =>
+	option.setName('ok')
+	.setDescription('Add meg a kitiltás okát.')
+	.setRequired(true)
+);
+
+const commands = [embedsay.toJSON(), suggest.toJSON(), kitiltás.toJSON()];
 
 const rest = new REST().setToken(process.env.TOKEN);
 
