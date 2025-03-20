@@ -58,7 +58,11 @@ var embedsay = new SlashCommandBuilder()
 	.setRequired(false)
 ); // channel
 
-const commands = [embedsay.toJSON()];
+var test = new SlashCommandBuilder()
+.setName('test')
+.setDescription('You can test what you want.')
+
+const commands = [embedsay.toJSON(), test.toJSON()];
 
 const rest = new REST().setToken(process.env.TOKEN);
 
